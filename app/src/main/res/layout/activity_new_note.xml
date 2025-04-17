@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <!-- Back & Title Bar -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_media_previous"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Notes"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/doneButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Done"
+            android:background="@android:color/transparent"
+            android:textColor="#000000"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- Title Input -->
+    <EditText
+        android:id="@+id/titleEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topBar"
+        android:hint="Title"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="@null"
+        android:inputType="text"
+        android:textColor="#000000"
+        android:textColorHint="#CCCCCC" />
+
+    <!-- Content Input -->
+    <EditText
+        android:id="@+id/contentEditText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/titleEditText"
+        android:layout_marginTop="12dp"
+        android:hint="Start typing..."
+        android:gravity="top"
+        android:textSize="16sp"
+        android:background="@null"
+        android:inputType="textMultiLine"
+        android:textColor="#000000"
+        android:textColorHint="#CCCCCC"
+        android:overScrollMode="always"/>
+</RelativeLayout>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/folderLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MY NOTES"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp" />
+
+    <!-- Profile Icon -->
+    <ImageView
+        android:id="@+id/profileIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="#EEEEEE"
+        android:padding="12dp"
+        android:src="@android:drawable/ic_menu_myplaces"
+        android:scaleType="centerInside" />
+
+    <!-- Tabs -->
+    <LinearLayout
+        android:id="@+id/tabs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/titleTextView"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp">
+
+        <Button
+            android:id="@+id/tabAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="All"
+            android:textStyle="bold"
+            android:textColor="#888888"
+            android:background="@android:color/transparent"
+            android:layout_marginEnd="24dp"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/tabFolder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Folder"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:background="@android:color/transparent"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- Search Bar -->
+    <EditText
+        android:id="@+id/searchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/tabs"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:hint="Search"
+        android:background="#EEEEEE"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="10dp"
+        android:padding="12dp"
+        android:textColorHint="#999999" />
+
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchEditText"
+        android:layout_above="@id/addFolderButton"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
+        android:visibility="visible" />
+
+    <!-- Floating Add Button -->
+    <ImageButton
+        android:id="@+id/addFolderButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:background="@drawable/add_button"
+        android:src="@android:drawable/ic_input_add"
+        android:contentDescription="Add Folder"
+        app:tint="#FFFFFF" />
+</RelativeLayout>

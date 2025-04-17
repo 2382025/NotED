@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center_horizontal"
+    android:background="#FFFFFF">
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@android:drawable/ic_media_previous"
+        android:layout_gravity="start"
+        android:contentDescription="Back" />
+
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="24dp"
+        android:src="@android:drawable/ic_menu_myplaces"
+        android:background="#DDDDDD"
+        android:padding="24dp" />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gwyneth"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/emailTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="gwynethuang@gmail.com"
+        android:textColor="#888888"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/changePasswordButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Password"
+        android:drawableEnd="@android:drawable/ic_lock_lock"
+        android:layout_marginTop="30dp"
+        android:background="#EEEEEE"
+        android:textColor="#888888"
+        android:enabled="true" />
+
+    <Button
+        android:id="@+id/logoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:backgroundTint="#B00020"
+        android:text="Log Out"
+        android:textColor="#FFFFFF" />
+</LinearLayout>

@@ -1,0 +1,84 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".Home">
+
+    <!-- Tombol Back di kiri atas -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_media_previous"
+        android:contentDescription="Back"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:tint="#000000" />
+
+    <!-- Tombol Done di kanan atas -->
+    <Button
+        android:id="@+id/doneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:minWidth="64dp"
+        android:minHeight="40dp" />
+
+    <!-- Tombol Delete (tempat sampah) di kiri tombol Done -->
+    <ImageButton
+        android:id="@+id/deleteButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_delete"
+        android:contentDescription="Delete"
+        android:layout_toStartOf="@id/doneButton"
+        android:layout_alignTop="@id/doneButton"
+        android:layout_marginEnd="8dp"
+        android:tint="#000000" />
+
+    <!-- Title -->
+    <EditText
+        android:id="@+id/titleEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Title"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_below="@id/backButton"
+        android:layout_marginTop="32dp"
+        android:background="@android:color/transparent"
+        android:textColor="#000000" />
+
+    <!-- Created At -->
+    <TextView
+        android:id="@+id/createdAtTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Created At"
+        android:textSize="12sp"
+        android:textColor="#888888"
+        android:layout_below="@id/titleEditText"
+        android:layout_marginTop="8dp" />
+
+    <!-- Content -->
+    <EditText
+        android:id="@+id/contentEditText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="Start typing..."
+        android:gravity="top"
+        android:textSize="16sp"
+        android:layout_below="@id/createdAtTextView"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:textColor="#000000" />
+
+</RelativeLayout>
