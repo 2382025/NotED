@@ -95,13 +95,13 @@
     <!-- Floating Add Button -->
     <ImageButton
         android:id="@+id/addFolderButton"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:background="@drawable/add_button"
+        android:layout_margin="24dp"
+        android:background="@drawable/add_folder_button"
         android:src="@android:drawable/ic_input_add"
-        android:contentDescription="Add Folder"
-        app:tint="#FFFFFF" />
+        app:tint="#FFFFFF"
+        android:elevation="8dp" />
 </RelativeLayout>

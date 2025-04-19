@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/folderLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/folderNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="10dp"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <!-- Tombol Back di kiri atas -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_media_previous"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:tint="#000000" />
+    <!-- Search Bar -->
+
+    <EditText
+        android:id="@+id/searchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="24dp"
+        android:background="#EEEEEE"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="10dp"
+        android:hint="Search"
+        android:padding="12dp"
+        android:textColorHint="#999999" />
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchEditText"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="40dp"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
+        android:visibility="visible" />
+
+
+    <!-- Floating Add Button -->
+    <ImageButton
+        android:id="@+id/addNoteButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="24dp"
+        android:background="@drawable/add_button"
+        android:src="@android:drawable/ic_input_add"
+        app:tint="#FFFFFF"
+        android:elevation="8dp" />
+</RelativeLayout>

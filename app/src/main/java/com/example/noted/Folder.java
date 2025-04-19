@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -14,7 +15,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,7 +24,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import android.os.Handler;
 
 public class Folder extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -46,19 +45,19 @@ public class Folder extends AppCompatActivity implements AdapterView.OnItemClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folder);
 
-        // Inisialisasi view
+        listView = findViewById(R.id.listView);
+        listView.setOnItemClickListener(this);
+
         profileIcon = findViewById(R.id.profileIcon);
         tabAll = findViewById(R.id.tabAll);
         tabFolder = findViewById(R.id.tabFolder);
         searchEditText = findViewById(R.id.searchEditText);
         addFolderButton = findViewById(R.id.addFolderButton);
 
-        listView = findViewById(R.id.listView);
-        listView.setOnItemClickListener(this);
-
         addFolderButton.setOnClickListener(v -> {
-            Intent intent = new Intent(Folder.this, NewFolder.class);
-            startActivity(intent);
+            NewFolderDialog dialog = new NewFolderDialog();
+            dialog.setOnFolderAddedListener(() -> getJSON()); // Refresh setelah tambah folder
+            dialog.show(getSupportFragmentManager(), "NewFolderDialog");
         });
 
         profileIcon.setOnClickListener(v -> {
@@ -66,14 +65,13 @@ public class Folder extends AppCompatActivity implements AdapterView.OnItemClick
             startActivity(intent);
         });
 
-        // tabAll mengarah ke Home (Note)
         tabAll.setOnClickListener(v -> {
             Intent intent = new Intent(Folder.this, Home.class);
             startActivity(intent);
         });
 
         setupSearchBar();
-        getJSON();
+        getJSON(); // Load awal
     }
 
     private void setupSearchBar() {
@@ -87,7 +85,7 @@ public class Folder extends AppCompatActivity implements AdapterView.OnItemClick
                     handler.removeCallbacks(searchRunnable);
                 }
                 searchRunnable = () -> filter(s.toString());
-                handler.postDelayed(searchRunnable, 500);
+                handler.postDelayed(searchRunnable, 300);
             }
 
             @Override
@@ -105,12 +103,12 @@ public class Folder extends AppCompatActivity implements AdapterView.OnItemClick
 
             for (int i = 0; i < result.length(); i++) {
                 JSONObject jo = result.getJSONObject(i);
-                String id = jo.getString(konfigurasi.TAG_ID);
-                String name = jo.getString(konfigurasi.TAG_FOLDER_NAME);
+                String id = jo.getString(konfigurasi.KEY_FOLDER_ID);   // Ambil "folder_id"
+                String name = jo.getString(konfigurasi.KEY_FOLDER_NAME); // Ambil "name"
 
                 HashMap<String, String> folder = new HashMap<>();
-                folder.put(konfigurasi.TAG_ID, id);
-                folder.put(konfigurasi.TAG_FOLDER_NAME, name);
+                folder.put(konfigurasi.KEY_FOLDER_ID, id);
+                folder.put(konfigurasi.KEY_FOLDER_NAME, name);
                 folderList.add(folder);
             }
 
@@ -120,7 +118,7 @@ public class Folder extends AppCompatActivity implements AdapterView.OnItemClick
 
         adapter = new SimpleAdapter(
                 Folder.this, folderList, R.layout.list_folder,
-                new String[]{konfigurasi.TAG_ID, konfigurasi.TAG_FOLDER_NAME},
+                new String[]{konfigurasi.KEY_FOLDER_ID, konfigurasi.KEY_FOLDER_NAME},
                 new int[]{R.id.id, R.id.name}
         );
 
@@ -133,7 +131,7 @@ public class Folder extends AppCompatActivity implements AdapterView.OnItemClick
         if (text.isEmpty()) {
             adapter = new SimpleAdapter(
                     Folder.this, folderList, R.layout.list_folder,
-                    new String[]{konfigurasi.TAG_ID, konfigurasi.TAG_FOLDER_NAME},
+                    new String[]{konfigurasi.KEY_FOLDER_ID, konfigurasi.KEY_FOLDER_NAME},
                     new int[]{R.id.id, R.id.name}
             );
             listView.setAdapter(adapter);
@@ -141,14 +139,14 @@ public class Folder extends AppCompatActivity implements AdapterView.OnItemClick
         }
 
         for (HashMap<String, String> item : folderList) {
-            if (item.get(konfigurasi.TAG_FOLDER_NAME).toLowerCase().contains(text.toLowerCase())) {
+            if (item.get(konfigurasi.KEY_FOLDER_NAME).toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(item);
             }
         }
 
         SimpleAdapter newAdapter = new SimpleAdapter(
                 Folder.this, filteredList, R.layout.list_folder,
-                new String[]{konfigurasi.TAG_ID, konfigurasi.TAG_FOLDER_NAME},
+                new String[]{konfigurasi.KEY_FOLDER_ID, konfigurasi.KEY_FOLDER_NAME},
                 new int[]{R.id.id, R.id.name}
         );
 
@@ -185,10 +183,10 @@ public class Folder extends AppCompatActivity implements AdapterView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(this, FolderDetail.class);
         HashMap<String, String> map = (HashMap<String, String>) parent.getItemAtPosition(position);
-        String folderId = map.get(konfigurasi.TAG_ID);
-        intent.putExtra(konfigurasi.FOLDER_ID_EXTRA, folderId);
+        String folderId = map.get(konfigurasi.KEY_FOLDER_ID);
+        Intent intent = new Intent(this, FolderDetail.class);
+        intent.putExtra(konfigurasi.KEY_FOLDER_ID, folderId);
         startActivity(intent);
     }
 }

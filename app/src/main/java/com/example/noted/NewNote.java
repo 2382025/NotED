@@ -1,13 +1,15 @@
 package com.example.noted;
 
 import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.HashMap;
 
 public class NewNote extends AppCompatActivity {
@@ -15,7 +17,8 @@ public class NewNote extends AppCompatActivity {
     private EditText titleEditText, contentEditText;
     private ImageButton backButton;
 
-    private boolean noteSaved = false; // Untuk cek apakah sudah disimpan atau belum
+    private boolean noteSaved = false; // Untuk cek apakah sudah disimpan
+    private String folderId; // <-- Ini sudah benar: pakai camelCase sesuai Java convention
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,18 +29,25 @@ public class NewNote extends AppCompatActivity {
         contentEditText = findViewById(R.id.contentEditText);
         backButton = findViewById(R.id.backButton);
 
-        // Tombol kembali
+        // Ambil folderId dari Intent
+        Intent intent = getIntent();
+        folderId = intent.getStringExtra(konfigurasi.FOLDER_ID);
+
+        // Kalau tidak ada folderId, kasih default "" supaya aman
+        if (folderId == null) {
+            folderId = "";
+        }
+
         backButton.setOnClickListener(v -> saveNoteAndGoHome());
     }
 
-    // Method untuk simpan note lalu kembali ke Home
     private void saveNoteAndGoHome() {
         String title = titleEditText.getText().toString().trim();
         String content = contentEditText.getText().toString().trim();
 
         if (title.isEmpty() && content.isEmpty()) {
             Toast.makeText(this, "Note is empty", Toast.LENGTH_SHORT).show();
-            finish(); // Tetap kembali ke Home walau kosong
+            finish(); // Tetap kembali walaupun kosong
             return;
         }
 
@@ -46,7 +56,6 @@ public class NewNote extends AppCompatActivity {
         }
     }
 
-    // Method untuk menambahkan note ke database
     private void addNote(String title, String content) {
         class AddNote extends AsyncTask<Void, Void, String> {
             ProgressDialog loading;
@@ -63,7 +72,6 @@ public class NewNote extends AppCompatActivity {
                 loading.dismiss();
                 Toast.makeText(NewNote.this, s, Toast.LENGTH_LONG).show();
                 noteSaved = true; // Tandai sudah tersimpan
-                // Setelah simpan, langsung ke Home
                 startActivity(new Intent(NewNote.this, Home.class));
                 finish();
             }
@@ -73,6 +81,7 @@ public class NewNote extends AppCompatActivity {
                 HashMap<String, String> params = new HashMap<>();
                 params.put(konfigurasi.KEY_NOTE_TITLE, title);
                 params.put(konfigurasi.KEY_NOTE_CONTENT, content);
+                params.put(konfigurasi.KEY_NOTE_FOLDER_ID, folderId); // <-- ini sekarang bener, pakai KEY_NOTE_FOLDER_ID
 
                 RequestHandler rh = new RequestHandler();
                 return rh.sendPostRequest(konfigurasi.URL_ADD_NOTE, params);

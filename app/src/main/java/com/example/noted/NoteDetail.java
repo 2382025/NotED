@@ -29,6 +29,7 @@ public class NoteDetail extends AppCompatActivity {
     private EditText titleEditText, contentEditText;
     private TextView createdAtTextView;
     private String id;
+    private String folder_id; // Added to track the folder_id
     private Button doneButton;
     private ImageButton backButton, deleteButton;
 
@@ -41,6 +42,12 @@ public class NoteDetail extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getStringExtra(konfigurasi.NOTE_ID);
 
+        // Retrieve folder_id from intent if available, otherwise set to default
+        folder_id = intent.getStringExtra(konfigurasi.FOLDER_ID);
+        if (folder_id == null) {
+            folder_id = "0"; // Default folder_id if not provided
+        }
+
         // Hubungkan dengan layout
         titleEditText = findViewById(R.id.titleEditText);
         contentEditText = findViewById(R.id.contentEditText);
@@ -48,6 +55,12 @@ public class NoteDetail extends AppCompatActivity {
         doneButton = findViewById(R.id.doneButton);
         deleteButton = findViewById(R.id.deleteButton);
         backButton = findViewById(R.id.backButton);
+
+        // Display folder ID if the TextView exists in layout
+        TextView folderIdTextView = findViewById(R.id.folderIdTextView);
+        if (folderIdTextView != null) {
+            folderIdTextView.setText("Folder ID: " + folder_id);
+        }
 
         // Ambil data note
         getNotes();
@@ -94,6 +107,17 @@ public class NoteDetail extends AppCompatActivity {
             String title = c.getString(konfigurasi.TAG_TITLE);
             String created_at = c.getString(konfigurasi.TAG_CREATED_AT);
             String content = c.getString(konfigurasi.TAG_CONTENT);
+
+            // Get folder_id from JSON if available
+            if (c.has(konfigurasi.TAG_FOLDER_ID)) {
+                folder_id = c.getString(konfigurasi.TAG_FOLDER_ID);
+
+                // Update the TextView if it exists
+                TextView folderIdTextView = findViewById(R.id.folderIdTextView);
+                if (folderIdTextView != null) {
+                    folderIdTextView.setText("Folder ID: " + folder_id);
+                }
+            }
 
             titleEditText.setText(title);
             contentEditText.setText(content);
@@ -145,6 +169,7 @@ public class NoteDetail extends AppCompatActivity {
                 hashMap.put(konfigurasi.KEY_NOTE_ID, id);
                 hashMap.put(konfigurasi.KEY_NOTE_TITLE, title);
                 hashMap.put(konfigurasi.KEY_NOTE_CONTENT, content);
+                hashMap.put(konfigurasi.KEY_NOTE_FOLDER_ID, folder_id); // Include folder_id in update
 
                 RequestHandler rh = new RequestHandler();
                 return rh.sendPostRequest(konfigurasi.URL_UPDATE_NOTE, hashMap);
@@ -188,7 +213,7 @@ public class NoteDetail extends AppCompatActivity {
                 super.onPostExecute(s);
                 loading.dismiss();
                 Toast.makeText(NoteDetail.this, s, Toast.LENGTH_LONG).show();
-                if (s.toLowerCase().contains("success")) { // <-- ubah disini
+                if (s.toLowerCase().contains("success")) {
                     goBackToHome();
                 }
             }
@@ -207,6 +232,8 @@ public class NoteDetail extends AppCompatActivity {
     private void goBackToHome() {
         Intent intent = new Intent(NoteDetail.this, Home.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        // Pass folder_id back to home if needed
+        intent.putExtra(konfigurasi.FOLDER_ID, folder_id);
         startActivity(intent);
         finish();
     }

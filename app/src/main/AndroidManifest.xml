@@ -32,6 +32,9 @@
         <activity android:name=".Profile" android:exported="true"/>
         <activity android:name=".ChangePassword" android:exported="true"/>
         <activity android:name=".Folder" android:exported="true"/>
+        <activity android:name=".FolderDetail" android:exported="true"/>
+
+
 
 
     </application>

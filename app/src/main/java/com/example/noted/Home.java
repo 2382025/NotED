@@ -75,6 +75,14 @@ public class Home extends AppCompatActivity implements ListView.OnItemClickListe
         getJSON(); // Ambil data
     }
 
+    // Override onResume to refresh data when returning to this activity
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh data setiap kali activity kembali ke foreground
+        getJSON();
+    }
+
     private void setupSearchBar() {
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
