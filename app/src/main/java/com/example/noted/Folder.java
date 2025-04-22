@@ -185,8 +185,11 @@ public class Folder extends AppCompatActivity implements AdapterView.OnItemClick
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         HashMap<String, String> map = (HashMap<String, String>) parent.getItemAtPosition(position);
         String folderId = map.get(konfigurasi.KEY_FOLDER_ID);
+        String folderName = map.get(konfigurasi.KEY_FOLDER_NAME);
+
         Intent intent = new Intent(this, FolderDetail.class);
         intent.putExtra(konfigurasi.KEY_FOLDER_ID, folderId);
+        intent.putExtra(konfigurasi.KEY_FOLDER_NAME, folderName);
         startActivity(intent);
     }
 }

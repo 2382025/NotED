@@ -84,6 +84,7 @@ public class NoteDetail extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+                super.onPostExecute(s);
                 loading.dismiss();
                 showNote(s);
             }

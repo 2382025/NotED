@@ -6,35 +6,77 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
-    <!-- Title -->
-    <TextView
-        android:id="@+id/folderNameTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="10dp"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
     <!-- Tombol Back di kiri atas -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_margin="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@android:drawable/ic_media_previous"
+        android:tint="#000000"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:tint="#000000" />
-    <!-- Search Bar -->
+        android:layout_alignParentTop="true" />
+
+    <!-- Tombol Delete di kanan atas -->
+    <ImageButton
+        android:id="@+id/deleteButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Delete"
+        android:src="@drawable/ic_delete"
+        android:tint="#000000"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true" />
+
+    <!-- Tombol Done di kanan atas (sebelah delete button) -->
+    <Button
+        android:id="@+id/doneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/deleteButton"
+        android:layout_alignTop="@id/deleteButton"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:minWidth="64dp"
+        android:minHeight="40dp"
+        android:text="Done"
+        android:textColor="#000000"
+        android:textStyle="bold" />
+
+    <!-- EditText untuk Folder Name di antara Back dan Done -->
+    <EditText
+        android:id="@+id/folderNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/backButton"
+        android:layout_toStartOf="@id/doneButton"
+        android:layout_alignTop="@id/backButton"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:background="@android:color/transparent"
+        android:hint="Folder Name"
+        android:padding="8dp"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:singleLine="true"
+        android:ellipsize="end" />
+
+
+
+
 
     <EditText
         android:id="@+id/searchEditText"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="24dp"
+        android:layout_below="@+id/backButton"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:background="#EEEEEE"
         android:drawableStart="@android:drawable/ic_menu_search"
         android:drawablePadding="10dp"
@@ -42,17 +84,17 @@
         android:padding="12dp"
         android:textColorHint="#999999" />
 
+    <!-- ListView -->
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/searchEditText"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="40dp"
+        android:layout_below="@+id/searchEditText"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="70dp"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
         android:visibility="visible" />
-
 
     <!-- Floating Add Button -->
     <ImageButton
@@ -66,4 +108,5 @@
         android:src="@android:drawable/ic_input_add"
         app:tint="#FFFFFF"
         android:elevation="8dp" />
+
 </RelativeLayout>

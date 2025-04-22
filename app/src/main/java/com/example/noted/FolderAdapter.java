@@ -49,7 +49,7 @@ public class FolderAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.list_folder, parent, false);
             holder = new ViewHolder();
-            holder.folderName = convertView.findViewById(R.id.folderNameTextView); // pastikan ID TextView di list_folder.xml adalah folderNameTextView
+            holder.folderName = convertView.findViewById(R.id.folderNameEditText); // pastikan ID TextView di list_folder.xml adalah folderNameTextView
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
