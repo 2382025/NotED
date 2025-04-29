@@ -2,6 +2,7 @@ package com.example.noted;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -20,13 +21,12 @@ public class NewFolderDialog extends DialogFragment {
     private Button okButton, cancelButton;
 
     private OnFolderAddedListener listener;
+    private String user_id;
 
-    // Interface untuk callback ke Activity
     public interface OnFolderAddedListener {
         void onFolderAdded();
     }
 
-    // Setter untuk listener
     public void setOnFolderAddedListener(OnFolderAddedListener listener) {
         this.listener = listener;
     }
@@ -42,13 +42,22 @@ public class NewFolderDialog extends DialogFragment {
 
         builder.setView(view);
 
+        // Ambil user_id dari SharedPreferences seperti di NewNote.java
+        SharedPreferences preferences = getActivity().getSharedPreferences("UserSession", 0);
+        user_id = preferences.getString("user_id", "0");
+
         okButton.setOnClickListener(v -> {
             String folderName = folderNameEditText.getText().toString().trim();
-            if (!folderName.isEmpty()) {
-                addFolder(folderName);
-            } else {
+            if (folderName.isEmpty()) {
                 Toast.makeText(getActivity(), "Folder Name Can't Be Empty", Toast.LENGTH_SHORT).show();
+                return;
             }
+            if (user_id.equals("0")) {
+                Toast.makeText(getActivity(), "User ID is missing. Please login again.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            addFolder(folderName);
         });
 
         cancelButton.setOnClickListener(v -> dismiss());
@@ -56,7 +65,6 @@ public class NewFolderDialog extends DialogFragment {
         return builder.create();
     }
 
-    // Method untuk menambahkan folder ke database
     private void addFolder(String folderName) {
         class AddFolder extends AsyncTask<Void, Void, String> {
             ProgressDialog loading;
@@ -71,18 +79,22 @@ public class NewFolderDialog extends DialogFragment {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 loading.dismiss();
-                Toast.makeText(getActivity(), s, Toast.LENGTH_LONG).show();
 
-                if (listener != null) {
-                    listener.onFolderAdded(); // kasih tahu Activity kalau sudah berhasil
+                if (s != null && s.toLowerCase().contains("success")) {
+                    Toast.makeText(getActivity(), "Folder successfully added", Toast.LENGTH_LONG).show();
+                    if (listener != null) {
+                        listener.onFolderAdded();
+                    }
+                    dismiss();
+                } else {
+                    Toast.makeText(getActivity(), "Failed to add folder: " + s, Toast.LENGTH_LONG).show();
                 }
-
-                dismiss(); // tutup dialog
             }
 
             @Override
             protected String doInBackground(Void... voids) {
                 HashMap<String, String> params = new HashMap<>();
+                params.put(konfigurasi.KEY_USER_ID, user_id);
                 params.put(konfigurasi.KEY_FOLDER_NAME, folderName);
 
                 RequestHandler rh = new RequestHandler();
@@ -90,7 +102,6 @@ public class NewFolderDialog extends DialogFragment {
             }
         }
 
-        AddFolder af = new AddFolder();
-        af.execute();
+        new AddFolder().execute();
     }
 }

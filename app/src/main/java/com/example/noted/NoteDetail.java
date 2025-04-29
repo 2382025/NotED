@@ -49,7 +49,7 @@ public class NoteDetail extends AppCompatActivity {
         id = intent.getStringExtra(konfigurasi.NOTE_ID);
         folder_id = intent.getStringExtra(konfigurasi.FOLDER_ID);
         if (folder_id == null) {
-            folder_id = "0";
+            folder_id = "";
         }
 
         titleEditText = findViewById(R.id.titleEditText);
@@ -64,11 +64,10 @@ public class NoteDetail extends AppCompatActivity {
             folderIdTextView.setText("Folder ID: " + folder_id);
         }
 
-        // Generate tanggal dan waktu otomatis untuk catatan baru
         if (id == null || id.isEmpty()) {
             Date currentDate = new Date();
-            createdAtDate = apiDateFormat.format(currentDate); // Format untuk dikirim ke API
-            createdAtTextView.setText(displayDateFormat.format(currentDate)); // Format untuk ditampilkan
+            createdAtDate = apiDateFormat.format(currentDate);
+            createdAtTextView.setText(displayDateFormat.format(currentDate));
         } else {
             getNotes();
         }
@@ -78,7 +77,14 @@ public class NoteDetail extends AppCompatActivity {
         backButton.setOnClickListener(v -> goBackToHome());
     }
 
+
+
     private void getNotes() {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("user_id", "");
+
+        Log.d("NoteDetail", "Fetching note with ID: " + id + " for user: " + userId);
+
         class GetNotes extends AsyncTask<Void, Void, String> {
             ProgressDialog loading;
 
@@ -92,21 +98,20 @@ public class NoteDetail extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 loading.dismiss();
+                Log.d("NoteDetail", "Server response: " + s);
                 showNote(s);
             }
 
             @Override
             protected String doInBackground(Void... params) {
                 RequestHandler rh = new RequestHandler();
-                String userId = getSharedPreferences("UserSession", MODE_PRIVATE).getString("user_id", "0");
 
-                HashMap<String, String> dataParams = new HashMap<>();
-                dataParams.put("id", id);
-                dataParams.put("user_id", userId);
+                // Menggunakan format query string yang sesuai dengan API
+                // Format: showNoteDetail.php?user_id=X&id=Y
+                String url = konfigurasi.URL_GET_NOTE_DETAIL + "user_id=" + userId + "&id=" + id;
+                Log.d("NoteDetail", "Request URL: " + url);
 
-                return rh.sendGetRequest(konfigurasi.URL_GET_NOTE_DETAIL, dataParams);
-
-
+                return rh.sendGetRequest(url);
             }
         }
         new GetNotes().execute();
@@ -114,38 +119,37 @@ public class NoteDetail extends AppCompatActivity {
 
     private void showNote(String json) {
         try {
+            Log.d("NoteDetail", "Raw JSON response: " + json);
+
             JSONObject jsonObject = new JSONObject(json);
-            JSONArray result = jsonObject.getJSONArray(konfigurasi.TAG_JSON_ARRAY);
+            JSONArray result = jsonObject.optJSONArray(konfigurasi.TAG_JSON_ARRAY);
+
+            if (result == null || result.length() == 0) {
+                Log.e("NoteDetail", "JSON Array is null or empty");
+                Toast.makeText(this, "No note details found", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             JSONObject c = result.getJSONObject(0);
 
-            String title = c.getString(konfigurasi.TAG_TITLE);
-            String created_at = c.getString(konfigurasi.TAG_CREATED_AT);
-            String content = c.getString(konfigurasi.TAG_CONTENT);
-
-
-            SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
-            String userId = prefs.getString("user_id", "0");
-            Log.d("NoteDetail", "User ID from SharedPreferences: " + userId);
-
+            String title = c.optString(konfigurasi.TAG_TITLE, "Untitled");
+            String created_at = c.optString(konfigurasi.TAG_CREATED_AT, "");
+            String content = c.optString(konfigurasi.TAG_CONTENT, "");
 
             titleEditText.setText(title);
             contentEditText.setText(content);
 
-            // Format tanggal dari API ke tampilan
             try {
                 Date date = apiDateFormat.parse(created_at);
-                if (date != null) {
-                    createdAtDate = created_at; // Simpan format asli untuk dikirim kembali ke API
-                    createdAtTextView.setText(displayDateFormat.format(date));
-                } else {
-                    createdAtTextView.setText(created_at);
-                }
+                createdAtTextView.setText(date != null ? displayDateFormat.format(date) : created_at);
             } catch (ParseException e) {
+                Log.e("NoteDetail", "Date parsing error: " + e.getMessage());
                 createdAtTextView.setText(created_at);
             }
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("NoteDetail", "JSON parsing error: " + e.getMessage());
+            Toast.makeText(this, "Error parsing note details", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -153,8 +157,9 @@ public class NoteDetail extends AppCompatActivity {
         final String title = titleEditText.getText().toString().trim();
         final String content = contentEditText.getText().toString().trim();
 
-        // Gunakan createdAtDate yang disimpan dalam format API
-        final String createdAtForApi = (id == null || id.isEmpty()) ? createdAtDate : createdAtDate;
+        // Get user ID from shared preferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE);
+        final String userId = sharedPreferences.getString("user_id", "");
 
         class UpdateNotes extends AsyncTask<Void, Void, String> {
             ProgressDialog loading;
@@ -169,8 +174,19 @@ public class NoteDetail extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 loading.dismiss();
-                Toast.makeText(NoteDetail.this, s, Toast.LENGTH_LONG).show();
-                goBackToHome();
+                try {
+                    JSONObject jsonResponse = new JSONObject(s);
+                    String status = jsonResponse.getString("status");
+                    String message = jsonResponse.getString("message");
+
+                    Toast.makeText(NoteDetail.this, message, Toast.LENGTH_LONG).show();
+
+                    if (status.equals("success")) {
+                        goBackToHome();
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(NoteDetail.this, "Error: " + s, Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
@@ -180,7 +196,7 @@ public class NoteDetail extends AppCompatActivity {
                 hashMap.put(konfigurasi.KEY_NOTE_TITLE, title);
                 hashMap.put(konfigurasi.KEY_NOTE_CONTENT, content);
                 hashMap.put(konfigurasi.KEY_NOTE_FOLDER_ID, folder_id);
-                hashMap.put(konfigurasi.KEY_NOTE_CREATED_AT, createdAtForApi); // Kirim format yang sesuai untuk API
+                hashMap.put(konfigurasi.KEY_USER_ID, userId); // Add user_id
 
                 RequestHandler rh = new RequestHandler();
                 return rh.sendPostRequest(konfigurasi.URL_UPDATE_NOTE, hashMap);
@@ -209,6 +225,10 @@ public class NoteDetail extends AppCompatActivity {
     }
 
     private void deleteNotes() {
+        // Get user ID from shared preferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE);
+        final String userId = sharedPreferences.getString("user_id", "");
+
         class DeleteNotes extends AsyncTask<Void, Void, String> {
             ProgressDialog loading;
 
@@ -222,16 +242,29 @@ public class NoteDetail extends AppCompatActivity {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 loading.dismiss();
-                Toast.makeText(NoteDetail.this, s, Toast.LENGTH_LONG).show();
-                if (s.toLowerCase().contains("success")) {
-                    goBackToHome();
+                try {
+                    JSONObject jsonResponse = new JSONObject(s);
+                    String status = jsonResponse.getString("status");
+                    String message = jsonResponse.getString("message");
+
+                    Toast.makeText(NoteDetail.this, message, Toast.LENGTH_LONG).show();
+
+                    if (status.equals("success")) {
+                        goBackToHome();
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(NoteDetail.this, "Error: " + s, Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             protected String doInBackground(Void... params) {
+                HashMap<String, String> paramsMap = new HashMap<>();
+                paramsMap.put("id", id);
+                paramsMap.put("user_id", userId);
+
                 RequestHandler rh = new RequestHandler();
-                return rh.sendGetRequestParam(konfigurasi.URL_DELETE_NOTE, id);
+                return rh.sendPostRequest(konfigurasi.URL_DELETE_NOTE, paramsMap);
             }
         }
         new DeleteNotes().execute();

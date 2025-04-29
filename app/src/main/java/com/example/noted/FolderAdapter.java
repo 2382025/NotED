@@ -63,8 +63,6 @@ public class FolderAdapter extends BaseAdapter {
         // Klik item folder
         convertView.setOnClickListener(v -> {
             Intent intent = new Intent(context, FolderDetail.class);
-            // ⛔ PERBAIKAN: Key "FOLDER_ID" tidak ada di konfigurasi.java sebelumnya
-            // SOLUSI: Pakai konfigurasi.KEY_FOLDER_ID supaya konsisten
             intent.putExtra(konfigurasi.KEY_FOLDER_ID, folder.get(konfigurasi.TAG_FOLDER_ID));
             intent.putExtra(konfigurasi.KEY_FOLDER_NAME, folderName);
             context.startActivity(intent);

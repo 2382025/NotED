@@ -1,5 +1,7 @@
 package com.example.noted;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -114,20 +116,26 @@ public class RequestHandler {
 
 
 
-    public String sendGetRequestParam(String requestURL, String id){
-        StringBuilder sb=new StringBuilder();
+    public String sendGetRequestParam(String requestURL, String id) {
+        StringBuilder sb = new StringBuilder();
         try {
             URL url = new URL(requestURL + id);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            BufferedReader bufferedReader = new BufferedReader(new
-                    InputStreamReader(con.getInputStream()));
+            Log.d("RequestHandler", "Request URL: " + url.toString());
 
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String s;
             while ((s = bufferedReader.readLine()) != null) {
-                sb.append(s + "\n");
+                sb.append(s).append("\n");
             }
-        }catch(Exception e){
+            bufferedReader.close();
+        } catch (Exception e) {
+            Log.e("RequestHandler", "Error in sendGetRequestParam: " + e.getMessage());
+            e.printStackTrace();
         }
+        Log.d("RequestHandler", "Response: " + sb.toString());
         return sb.toString();
     }
 

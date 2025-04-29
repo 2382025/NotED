@@ -3,7 +3,7 @@ package com.example.noted;
 public class konfigurasi {
 
     // PENTING! Ganti IP ini sesuai IP komputer kamu yang menjalankan server PHP
-    public static final String URL_BASE = "http://10.8.15.201/Android/noted/";
+    public static final String URL_BASE = "http://192.168.91.92/Android/noted/";
 
     // ----------------------
     // USER-related Endpoints
@@ -19,7 +19,7 @@ public class konfigurasi {
     // ----------------------
     public static final String URL_ADD_NOTE = URL_BASE + "addNote.php";
     public static final String URL_GET_ALL_NOTES = URL_BASE + "showNote.php";
-    public static final String URL_GET_NOTE_DETAIL = URL_BASE + "showNoteDetail.php?id=";
+    public static final String URL_GET_NOTE_DETAIL = URL_BASE + "showNoteDetail.php?";
     public static final String URL_UPDATE_NOTE = URL_BASE + "updateNote.php";
     public static final String URL_DELETE_NOTE = URL_BASE + "deleteNote.php?id=";
 
@@ -28,7 +28,7 @@ public class konfigurasi {
     // ------------------------
     public static final String URL_ADD_FOLDER = URL_BASE + "addFolder.php";
     public static final String URL_GET_ALL_FOLDERS = URL_BASE + "showFolder.php";
-    public static final String URL_GET_FOLDER_DETAIL = URL_BASE + "showFolderDetail.php?folder_id="; // Sesuaikan pakai folder_id
+    public static final String URL_GET_FOLDER_DETAIL = URL_BASE + "showFolderDetail.php?";
     public static final String URL_UPDATE_FOLDER = URL_BASE + "updateFolder.php";
     public static final String URL_DELETE_FOLDER = URL_BASE + "deleteFolder.php?folder_id=";
 
