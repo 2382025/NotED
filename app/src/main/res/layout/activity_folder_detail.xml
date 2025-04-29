@@ -85,18 +85,19 @@
         android:textColorHint="#999999" />
 
     <!-- ListView -->
+
+    <!-- Floating Add Button -->
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="559dp"
         android:layout_below="@+id/searchEditText"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="70dp"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
         android:visibility="visible" />
 
-    <!-- Floating Add Button -->
     <ImageButton
         android:id="@+id/addNoteButton"
         android:layout_width="64dp"

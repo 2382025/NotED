@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import android.util.Log;
+import android.content.SharedPreferences;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -72,7 +73,6 @@ public class Home extends AppCompatActivity implements ListView.OnItemClickListe
         });
 
         setupSearchBar(); // Pasang search bar
-        getJSON(); // Ambil data
     }
 
     // Override onResume to refresh data when returning to this activity
@@ -108,7 +108,7 @@ public class Home extends AppCompatActivity implements ListView.OnItemClickListe
     private void showNotes() {
         JSONObject jsonObject;
 
-        noteList.clear(); // Biar data ga dobel
+        noteList.clear();
         try {
             jsonObject = new JSONObject(JSON_STRING);
             JSONArray result = jsonObject.getJSONArray(konfigurasi.TAG_JSON_ARRAY);
@@ -168,6 +168,11 @@ public class Home extends AppCompatActivity implements ListView.OnItemClickListe
     }
 
     private void getJSON() {
+        // Ambil user_id dari SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UserSession", MODE_PRIVATE);
+
+        String userId = sharedPreferences.getString("user_id", "");
+
         class GetJSON extends AsyncTask<Void, Void, String> {
             ProgressDialog loading;
 
@@ -187,9 +192,10 @@ public class Home extends AppCompatActivity implements ListView.OnItemClickListe
 
             @Override
             protected String doInBackground(Void... params) {
+                // Kirim userId sebagai parameter untuk filter berdasarkan user
                 RequestHandler rh = new RequestHandler();
-                String s = rh.sendGetRequest(konfigurasi.URL_GET_ALL_NOTES);
-                return s;
+                String url = konfigurasi.URL_GET_ALL_NOTES + "?user_id=" + userId;  // Modifikasi URL untuk menyertakan user_id
+                return rh.sendGetRequest(url);
             }
         }
         GetJSON gj = new GetJSON();

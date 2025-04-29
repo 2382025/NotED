@@ -2,6 +2,7 @@ package com.example.noted;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -18,7 +19,11 @@ public class NewNote extends AppCompatActivity {
     private ImageButton backButton;
 
     private boolean noteSaved = false; // Untuk cek apakah sudah disimpan
-    private String folderId; // <-- Ini sudah benar: pakai camelCase sesuai Java convention
+    private String folderId;
+    private String userId; // Variable baru untuk menyimpan user ID
+
+    // SharedPreferences untuk menyimpan data login
+    private static final String PREFS_NAME = "UserLoginPrefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,14 @@ public class NewNote extends AppCompatActivity {
         if (folderId == null) {
             folderId = "";
         }
+
+        // Ambil user ID dari SharedPreferences
+        SharedPreferences settings = getSharedPreferences("UserSession", 0);
+        userId = settings.getString("user_id", "0");
+
+
+        // Log userId yang didapat
+        System.out.println("Current user ID: " + userId);
 
         backButton.setOnClickListener(v -> saveNoteAndGoHome());
     }
@@ -81,7 +94,8 @@ public class NewNote extends AppCompatActivity {
                 HashMap<String, String> params = new HashMap<>();
                 params.put(konfigurasi.KEY_NOTE_TITLE, title);
                 params.put(konfigurasi.KEY_NOTE_CONTENT, content);
-                params.put(konfigurasi.KEY_NOTE_FOLDER_ID, folderId); // <-- ini sekarang bener, pakai KEY_NOTE_FOLDER_ID
+                params.put(konfigurasi.KEY_NOTE_FOLDER_ID, folderId);
+                params.put(konfigurasi.KEY_USER_ID, userId); // Pakai userId dari SharedPreferences
 
                 RequestHandler rh = new RequestHandler();
                 return rh.sendPostRequest(konfigurasi.URL_ADD_NOTE, params);

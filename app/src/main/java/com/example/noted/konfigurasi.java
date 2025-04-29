@@ -3,7 +3,16 @@ package com.example.noted;
 public class konfigurasi {
 
     // PENTING! Ganti IP ini sesuai IP komputer kamu yang menjalankan server PHP
-    public static final String URL_BASE = "http://10.8.14.41/Android/noted/";
+    public static final String URL_BASE = "http://10.8.15.201/Android/noted/";
+
+    // ----------------------
+    // USER-related Endpoints
+    // ----------------------
+    public static final String URL_ADD_USER = URL_BASE + "userHandler.php?action=create";
+    public static final String URL_LOGIN = URL_BASE + "userHandler.php?action=login";
+    public static final String URL_GET_ALL_USERS = URL_BASE + "userHandler.php?action=read";
+    public static final String URL_UPDATE_USER = URL_BASE + "userHandler.php?action=update";
+    public static final String URL_DELETE_USER = URL_BASE + "userHandler.php?action=delete&id=";
 
     // ----------------------
     // NOTE-related Endpoints
@@ -24,6 +33,14 @@ public class konfigurasi {
     public static final String URL_DELETE_FOLDER = URL_BASE + "deleteFolder.php?folder_id=";
 
     // --------------------
+    // USER-related Keys (Field pada tb_users)
+    // --------------------
+    public static final String KEY_USER_ID = "user_id";
+    public static final String KEY_USER_NAME = "name";
+    public static final String KEY_USER_EMAIL = "email";
+    public static final String KEY_USER_PASSWORD = "password";
+
+    // --------------------
     // NOTE-related Keys (Field pada tb_notes)
     // --------------------
     public static final String KEY_NOTE_ID = "id";
@@ -42,6 +59,11 @@ public class konfigurasi {
     // JSON Tags (untuk parsing JSON dari server)
     // --------------------
     public static final String TAG_JSON_ARRAY = "result";
+
+    // User Tags
+    public static final String TAG_USER_ID = "user_id";
+    public static final String TAG_USER_NAME = "name";
+    public static final String TAG_USER_EMAIL = "email";
 
     // Note Tags
     public static final String TAG_ID = "id";

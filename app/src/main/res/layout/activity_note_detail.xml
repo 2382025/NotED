@@ -73,11 +73,11 @@
         android:id="@+id/folderIdTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Folder ID: "
-        android:textSize="12sp"
-        android:textColor="#888888"
+
         android:layout_below="@id/createdAtTextView"
-        android:layout_marginTop="4dp" />
+        android:layout_marginTop="5dp"
+        android:textColor="#888888"
+        android:textSize="12sp" />
 
     <!-- Content -->
     <EditText

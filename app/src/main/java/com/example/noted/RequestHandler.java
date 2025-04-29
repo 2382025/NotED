@@ -75,22 +75,44 @@ public class RequestHandler {
         return sb.toString();
     }
 
-    public String sendGetRequest(String requestURL){
-        StringBuilder sb=new StringBuilder();
-        try {
-            URL url = new URL(requestURL);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            BufferedReader bufferedReader = new BufferedReader(new
-                    InputStreamReader(con.getInputStream()));
+    public String sendGetRequest(String requestURL, HashMap<String, String> params) {
+        StringBuilder sb = new StringBuilder(requestURL);
 
-            String s;
-            while ((s = bufferedReader.readLine()) != null) {
-                sb.append(s + "\n");
+        if (params != null && !params.isEmpty()) {
+            sb.append("?");
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                try {
+                    sb.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                    sb.append("=");
+                    sb.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                    sb.append("&");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
-        }catch(Exception e){
+            sb.setLength(sb.length() - 1); // Hapus "&" terakhir
         }
-        return sb.toString();
+
+        StringBuilder response = new StringBuilder();
+        try {
+            URL url = new URL(sb.toString());
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return response.toString();
     }
+
+
 
     public String sendGetRequestParam(String requestURL, String id){
         StringBuilder sb=new StringBuilder();
@@ -107,6 +129,11 @@ public class RequestHandler {
         }catch(Exception e){
         }
         return sb.toString();
+    }
+
+    // Overload method agar bisa dipakai tanpa parameter (seperti sebelumnya)
+    public String sendGetRequest(String requestURL) {
+        return sendGetRequest(requestURL, null);
     }
 
 

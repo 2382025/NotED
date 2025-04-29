@@ -2,6 +2,7 @@ package com.example.noted;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -173,13 +174,22 @@ public class Folder extends AppCompatActivity implements AdapterView.OnItemClick
 
             @Override
             protected String doInBackground(Void... voids) {
+                // Ambil user_id dari SharedPreferences
+                SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+                String userId = prefs.getString("user_id", null);
+
+                HashMap<String, String> params = new HashMap<>();
+                params.put("user_id", userId);  // Kirim user_id ke server
+
                 RequestHandler rh = new RequestHandler();
-                return rh.sendGetRequest(konfigurasi.URL_GET_ALL_FOLDERS);
+                return rh.sendGetRequest(konfigurasi.URL_GET_ALL_FOLDERS, params);
             }
+
         }
         GetJSON gj = new GetJSON();
         gj.execute();
     }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

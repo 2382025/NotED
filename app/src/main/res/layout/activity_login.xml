@@ -32,10 +32,10 @@
 
     <!-- Username Field -->
     <EditText
-        android:id="@+id/usernameEditText"
+        android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Username"
+        android:hint="Email"
         android:background="#EEEEEE"
         android:drawableStart="@android:drawable/ic_menu_myplaces"
         android:drawablePadding="10dp"

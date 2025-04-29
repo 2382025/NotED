@@ -2,8 +2,10 @@ package com.example.noted;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,26 +31,27 @@ public class NoteDetail extends AppCompatActivity {
     private EditText titleEditText, contentEditText;
     private TextView createdAtTextView;
     private String id;
-    private String folder_id; // Added to track the folder_id
+    private String folder_id;
     private Button doneButton;
     private ImageButton backButton, deleteButton;
+
+    private String createdAtDate = ""; // Untuk menyimpan tanggal dan waktu saat buat catatan baru
+    private SimpleDateFormat apiDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    private SimpleDateFormat displayDateFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_detail);
 
-        // Ambil id dari intent
+
         Intent intent = getIntent();
         id = intent.getStringExtra(konfigurasi.NOTE_ID);
-
-        // Retrieve folder_id from intent if available, otherwise set to default
         folder_id = intent.getStringExtra(konfigurasi.FOLDER_ID);
         if (folder_id == null) {
-            folder_id = "0"; // Default folder_id if not provided
+            folder_id = "0";
         }
 
-        // Hubungkan dengan layout
         titleEditText = findViewById(R.id.titleEditText);
         contentEditText = findViewById(R.id.contentEditText);
         createdAtTextView = findViewById(R.id.createdAtTextView);
@@ -56,16 +59,20 @@ public class NoteDetail extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteButton);
         backButton = findViewById(R.id.backButton);
 
-        // Display folder ID if the TextView exists in layout
         TextView folderIdTextView = findViewById(R.id.folderIdTextView);
         if (folderIdTextView != null) {
             folderIdTextView.setText("Folder ID: " + folder_id);
         }
 
-        // Ambil data note
-        getNotes();
+        // Generate tanggal dan waktu otomatis untuk catatan baru
+        if (id == null || id.isEmpty()) {
+            Date currentDate = new Date();
+            createdAtDate = apiDateFormat.format(currentDate); // Format untuk dikirim ke API
+            createdAtTextView.setText(displayDateFormat.format(currentDate)); // Format untuk ditampilkan
+        } else {
+            getNotes();
+        }
 
-        // Set klik listener
         doneButton.setOnClickListener(v -> updateNotes());
         deleteButton.setOnClickListener(v -> showDeleteDialog());
         backButton.setOnClickListener(v -> goBackToHome());
@@ -84,7 +91,6 @@ public class NoteDetail extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                super.onPostExecute(s);
                 loading.dismiss();
                 showNote(s);
             }
@@ -92,10 +98,17 @@ public class NoteDetail extends AppCompatActivity {
             @Override
             protected String doInBackground(Void... params) {
                 RequestHandler rh = new RequestHandler();
-                return rh.sendGetRequestParam(konfigurasi.URL_GET_NOTE_DETAIL, id);
+                String userId = getSharedPreferences("UserSession", MODE_PRIVATE).getString("user_id", "0");
+
+                HashMap<String, String> dataParams = new HashMap<>();
+                dataParams.put("id", id);
+                dataParams.put("user_id", userId);
+
+                return rh.sendGetRequest(konfigurasi.URL_GET_NOTE_DETAIL, dataParams);
+
+
             }
         }
-
         new GetNotes().execute();
     }
 
@@ -109,28 +122,21 @@ public class NoteDetail extends AppCompatActivity {
             String created_at = c.getString(konfigurasi.TAG_CREATED_AT);
             String content = c.getString(konfigurasi.TAG_CONTENT);
 
-            // Get folder_id from JSON if available
-            if (c.has(konfigurasi.TAG_FOLDER_ID)) {
-                folder_id = c.getString(konfigurasi.TAG_FOLDER_ID);
 
-                // Update the TextView if it exists
-                TextView folderIdTextView = findViewById(R.id.folderIdTextView);
-                if (folderIdTextView != null) {
-                    folderIdTextView.setText("Folder ID: " + folder_id);
-                }
-            }
+            SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+            String userId = prefs.getString("user_id", "0");
+            Log.d("NoteDetail", "User ID from SharedPreferences: " + userId);
+
 
             titleEditText.setText(title);
             contentEditText.setText(content);
 
-            // Format tanggal
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault());
-
+            // Format tanggal dari API ke tampilan
             try {
-                Date date = inputFormat.parse(created_at);
+                Date date = apiDateFormat.parse(created_at);
                 if (date != null) {
-                    createdAtTextView.setText(outputFormat.format(date));
+                    createdAtDate = created_at; // Simpan format asli untuk dikirim kembali ke API
+                    createdAtTextView.setText(displayDateFormat.format(date));
                 } else {
                     createdAtTextView.setText(created_at);
                 }
@@ -147,6 +153,9 @@ public class NoteDetail extends AppCompatActivity {
         final String title = titleEditText.getText().toString().trim();
         final String content = contentEditText.getText().toString().trim();
 
+        // Gunakan createdAtDate yang disimpan dalam format API
+        final String createdAtForApi = (id == null || id.isEmpty()) ? createdAtDate : createdAtDate;
+
         class UpdateNotes extends AsyncTask<Void, Void, String> {
             ProgressDialog loading;
 
@@ -161,7 +170,7 @@ public class NoteDetail extends AppCompatActivity {
                 super.onPostExecute(s);
                 loading.dismiss();
                 Toast.makeText(NoteDetail.this, s, Toast.LENGTH_LONG).show();
-                goBackToHome(); // Balik ke home setelah update
+                goBackToHome();
             }
 
             @Override
@@ -170,13 +179,13 @@ public class NoteDetail extends AppCompatActivity {
                 hashMap.put(konfigurasi.KEY_NOTE_ID, id);
                 hashMap.put(konfigurasi.KEY_NOTE_TITLE, title);
                 hashMap.put(konfigurasi.KEY_NOTE_CONTENT, content);
-                hashMap.put(konfigurasi.KEY_NOTE_FOLDER_ID, folder_id); // Include folder_id in update
+                hashMap.put(konfigurasi.KEY_NOTE_FOLDER_ID, folder_id);
+                hashMap.put(konfigurasi.KEY_NOTE_CREATED_AT, createdAtForApi); // Kirim format yang sesuai untuk API
 
                 RequestHandler rh = new RequestHandler();
                 return rh.sendPostRequest(konfigurasi.URL_UPDATE_NOTE, hashMap);
             }
         }
-
         new UpdateNotes().execute();
     }
 
@@ -219,21 +228,18 @@ public class NoteDetail extends AppCompatActivity {
                 }
             }
 
-
             @Override
             protected String doInBackground(Void... params) {
                 RequestHandler rh = new RequestHandler();
                 return rh.sendGetRequestParam(konfigurasi.URL_DELETE_NOTE, id);
             }
         }
-
         new DeleteNotes().execute();
     }
 
     private void goBackToHome() {
         Intent intent = new Intent(NoteDetail.this, Home.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        // Pass folder_id back to home if needed
         intent.putExtra(konfigurasi.FOLDER_ID, folder_id);
         startActivity(intent);
         finish();

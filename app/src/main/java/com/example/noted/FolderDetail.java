@@ -40,6 +40,9 @@ public class FolderDetail extends AppCompatActivity implements ListView.OnItemCl
     private String folder_name;
     private String JSON_STRING;
 
+    private String user_id;
+
+
     private ArrayList<HashMap<String, String>> noteList = new ArrayList<>();
     private SimpleAdapter adapter;
     private Handler handler = new Handler();
@@ -50,6 +53,8 @@ public class FolderDetail extends AppCompatActivity implements ListView.OnItemCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folder_detail);
+
+
 
         listView = findViewById(R.id.listView);
         searchEditText = findViewById(R.id.searchEditText);
@@ -286,10 +291,11 @@ public class FolderDetail extends AppCompatActivity implements ListView.OnItemCl
                 super.onPostExecute(s);
                 loading.dismiss();
                 Toast.makeText(FolderDetail.this, s, Toast.LENGTH_LONG).show();
-                if (s.toLowerCase().contains("success")) {
-                    goBackToFolder();
-                }
+                // Tidak perlu goBackToFolder()
+                // Bisa reload data di FolderDetail aja kalau perlu
+                getJSON(); // Misal mau refresh daftar catatan
             }
+
 
             @Override
             protected String doInBackground(Void... params) {
