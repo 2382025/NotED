@@ -20,18 +20,12 @@ public class Profile extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         // Inisialisasi view
-        nameTextView = findViewById(R.id.nameTextView);
-        emailTextView = findViewById(R.id.emailTextView);
+
         changePasswordButton = findViewById(R.id.changePasswordButton);
         logoutButton = findViewById(R.id.logoutButton);
         backButton = findViewById(R.id.backButton); // Sesuai dengan ID di XML
 
-        // Ambil data dari intent (atau bisa juga SharedPreferences)
-        String name = getIntent().getStringExtra("USERNAME");
-        String email = getIntent().getStringExtra("EMAIL");
 
-        nameTextView.setText(name != null ? name : "Your Name");
-        emailTextView.setText(email != null ? email : "you@example.com");
 
         // Tombol back
         backButton.setOnClickListener(v -> finish());

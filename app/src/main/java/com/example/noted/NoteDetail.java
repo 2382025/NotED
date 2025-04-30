@@ -59,10 +59,7 @@ public class NoteDetail extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteButton);
         backButton = findViewById(R.id.backButton);
 
-        TextView folderIdTextView = findViewById(R.id.folderIdTextView);
-        if (folderIdTextView != null) {
-            folderIdTextView.setText("Folder ID: " + folder_id);
-        }
+
 
         if (id == null || id.isEmpty()) {
             Date currentDate = new Date();

@@ -3,16 +3,15 @@ package com.example.noted;
 public class konfigurasi {
 
     // PENTING! Ganti IP ini sesuai IP komputer kamu yang menjalankan server PHP
-    public static final String URL_BASE = "http://192.168.91.92/Android/noted/";
+    public static final String URL_BASE = "http://10.2.6.144/Android/noted/";
 
     // ----------------------
     // USER-related Endpoints
     // ----------------------
     public static final String URL_ADD_USER = URL_BASE + "userHandler.php?action=create";
     public static final String URL_LOGIN = URL_BASE + "userHandler.php?action=login";
-    public static final String URL_GET_ALL_USERS = URL_BASE + "userHandler.php?action=read";
-    public static final String URL_UPDATE_USER = URL_BASE + "userHandler.php?action=update";
-    public static final String URL_DELETE_USER = URL_BASE + "userHandler.php?action=delete&id=";
+
+    public static final String URL_CHANGE_PASSWORD = URL_BASE + "changePassword.php";
 
     // ----------------------
     // NOTE-related Endpoints

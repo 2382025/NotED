@@ -70,7 +70,7 @@ public class SignUp extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(SignUp.this, "Sign Up Failed: " + response, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUp.this, "" + response, Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> Toast.makeText(SignUp.this, "Sign Up Error: " + error.getMessage(), Toast.LENGTH_SHORT).show()
